@@ -1,5 +1,0 @@
-Problems Faced:
-	1.  While scrapping, I initially tried to store all links in one list, and after each page removed duplicate links by converting 
-	     the list to set then back to list. But, even this caused overflow and I wasn't able to extract all links.
-	     So, I extracted 5 pages at a time, and wrote them on a txt file, and looped over like this.
-	     Later, I cleaned that txt file to get the desired list of links of all the problems.

@@ -1,7 +1,7 @@
 import os
 import re
 
-qData_folder = "../Leetcode scraping/qData"
+qData_folder = "Leetcode scraping/qData"
 
 target_str = "Example 1:"
 
