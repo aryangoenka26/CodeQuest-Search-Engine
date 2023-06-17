@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Question Finder</title>
+        <link rel = "stylesheet" href = "style.css">
+        <style>
+          body{
+            font-family: fantasy;
+            background-color: lightskyblue;
+            margin : 0;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+          }
+
+          h1{
+            font-style: italic;
+            font-family: Georgia, Arial, Helvetica;
+            text-align: center;
+            margin-top: 2px;
+            margin-bottom: 2px;
+            font-weight: 1000;
+            font-size: 2.2rem;
+            /* letter-spacing: 1px; */
+            color: rgb(15, 15, 104);
+          }
+
+          form {
+            margin-top: 30px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          }
+          
+          input[type="submit"] {
+              padding: 4px 8px;
+              border-radius: 3px;
+              border: none;
+              outline: none;
+              background-color: #10d244;
+              color: white;
+              cursor: pointer;
+          }
+
+          input[type="submit"]:hover {
+              background-color: #00b173;
+          }
+
+          .results {
+              margin-top: 20px;
+              margin-left: 100px;
+          }
+
+          .results a{
+              display: block;
+              margin-bottom: 10px;
+              text-decoration: none;
+              color: #0b0d25;
+              transition: color 0.3s ease;
+          }
+
+          .results a:hover {
+              color: #1b01c5;
+          }
+
+          footer {
+              font-family: 'Times New Roman', Times, serif;
+              background-color: rgb(25, 32, 40);
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              font-size: 0.9rem;
+              width: 100%;
+              position: fixed;
+              bottom: 0;
+              left: 0;
+          }
+
+          footer a {
+              color: #023dff;
+              text-decoration: none;
+          }
+
+          footer a:hover {
+              color: #151f47;
+          }
+
+          .creator{
+            text-align: left;
+            margin: 5px 7px;
+            color: yellow;
+          }
+
+          .Footer-links{
+            text-align: center;
+            margin: 5px 7px;
+            flex-grow: 1;
+          }
+        </style>
+    </head>
+    <body>
+      <h1>LeetCode Question Finder</h1>
+        <div class="form">
+          <form method="POST">
+            {{ form.hidden_tag() }}
+            {{ form.search.label }}
+            {{ form.search() }}
+            {{ form.submit() }}
+          </form>
+        </div>
+        <div class = "results">
+          {% for result in results %}
+          <p><a href="{{ result }}" target="_blank">{{ result }}</a></p>
+          {% endfor %}
+        </div>
+        <footer>
+          <div class = "creator">Created by Aryan Goenka</div>
+          <div class = "Footer-Links">
+              <a href="https://www.linkedin.com/in/aryan-goenka-180094224/" target="_blank">LinkedIn</a> |
+              <a href="https://codeforces.com/profile/aryangoenka" target="_blank">CodeForces</a> |
+              <a href="mailto:aryangoenka26@gmail.com">Email</a>
+          </div>
+      </footer>
+      </body>
+</html>

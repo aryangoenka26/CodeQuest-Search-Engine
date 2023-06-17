@@ -1,6 +1,10 @@
 import math
 import re
 
+from flask import Flask, render_template, request, jsonify
+from flask_wtf import FlaskForm
+from wtforms import StringField, SubmitField
+
 def load_vocab():
     vocab = {}
     with open("vocab.txt", "r") as f:
@@ -101,12 +105,6 @@ def calc_docs_sorted_order(q_terms):
         if(len(potential_docs) == 0):
             print("No matching question found. Please search with more relevant terms.")
         
-        # Printing ans
-        # print("The Question links in Decreasing Order of Relevance are: \n")
-        # for doc_index in potential_docs:
-        #     print("Question Link:", Qlink[int(doc_index) - 1], "\tScore:", potential_docs[doc_index])
-
-        # return a list containing top 20 q links in dec order
         count = 0
         for doc_index in potential_docs:
             q_Links.append([potential_docs[doc_index], Qlink[int(doc_index) - 1]])
@@ -115,21 +113,35 @@ def calc_docs_sorted_order(q_terms):
                 break
             
     q_Links = sorted(q_Links, key =lambda item : item[0], reverse = True)
-    return q_Links[:20]
+    q_Links = q_Links[:20]
+
+    ans = []
+    for link in q_Links:
+        ans.append(link[1])
+
+    return ans
 
 
+# Use of Flask
+app = Flask(__name__)
+app.config['SECRET_KEY'] = 'aryan-goenka'
 
+# Search Form for user to input the query
+class Search_Form(FlaskForm):
+    search = StringField("Enter your search terms:  ")
+    submit = SubmitField("Search")
 
-query = input('Enter your query: ')
-q_terms = [term.lower() for term in query.strip().split()]
+@app.route("/<query>")
+def return_links(query):
+    q_terms = [term.lower() for term in query.strip().split()]
+    return jsonify(calc_docs_sorted_order(q_terms)[:20])
 
-# print(q_terms)
-ans = calc_docs_sorted_order(q_terms)
-
-if ans:
-    print("The Question links in Decreasing Order of Relevance are: \n")
-    for (index, link) in enumerate(ans, 1):
-        print("{})  ".format(index), end= "")
-        print(link[1])
-else:
-    print("No matching question found, please try again with different words.")
+@app.route("/", methods = ['GET', 'POST'])
+def home():
+    form = Search_Form()
+    ans = []
+    if form.validate_on_submit():
+        query = form.search.data
+        q_terms = [term.lower() for term in query.strip().split()]
+        ans = calc_docs_sorted_order(q_terms)[:20]
+    return render_template('index.html', form = form, results = ans)
