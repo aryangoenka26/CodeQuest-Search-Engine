@@ -47,7 +47,7 @@ def load_link_of_qs():
     return links
 
 def load_headings():
-    with open("Leetcode-Scraping/qData/index.txt", "r") as f:
+    with open("Leetcode-Scraping/qData/index.txt", "r", encoding='utf-8', errors = "ignore") as f:
         lines = f.readlines()
 
     headings = []
