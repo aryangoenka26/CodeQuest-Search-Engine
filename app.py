@@ -46,10 +46,24 @@ def load_link_of_qs():
 
     return links
 
+def load_headings():
+    with open("Leetcode-Scraping/qData/index.txt", "r") as f:
+        lines = f.readlines()
+
+    headings = []
+    for heading in lines:
+        words = heading.split()
+        heading = ' '.join(words[1:])
+
+        headings.append(heading)
+
+    return headings
+
 vocab = load_vocab()            # vocab : idf_values
 document = load_document()
 inverted_index = load_inverted_index()
 Qlink = load_link_of_qs()
+headings = load_headings()
 
 # returns a dict with key : doc index, value : Normalized term frequency for this doc
 def get_tf_dict(term):
@@ -107,7 +121,9 @@ def calc_docs_sorted_order(q_terms):
         
         count = 0
         for doc_index in potential_docs:
-            q_Links.append([potential_docs[doc_index], Qlink[int(doc_index) - 1]])
+            q_Links.append([potential_docs[doc_index], 
+                            Qlink[int(doc_index) - 1], 
+                            headings[int(doc_index) - 1]])
             count += 1
             if(count > 20):
                 break
@@ -115,9 +131,9 @@ def calc_docs_sorted_order(q_terms):
     q_Links = sorted(q_Links, key =lambda item : item[0], reverse = True)
     q_Links = q_Links[:20]
 
-    ans = []
+    ans = []        # [link, heading]
     for link in q_Links:
-        ans.append(link[1])
+        ans.append([link[1], link[2]])
 
     return ans
 
@@ -128,20 +144,27 @@ app.config['SECRET_KEY'] = 'aryan-goenka'
 
 # Search Form for user to input the query
 class Search_Form(FlaskForm):
-    search = StringField("Enter your search terms:  ")
+    search = StringField("Enter your search terms: ")
     submit = SubmitField("Search")
 
-@app.route("/<query>")
-def return_links(query):
-    q_terms = [term.lower() for term in query.strip().split()]
-    return jsonify(calc_docs_sorted_order(q_terms)[:20])
+# @app.route("/<query>")
+# def return_links(query):
+#     q_terms = [term.lower() for term in query.strip().split()]
+#     return jsonify(calc_docs_sorted_order(q_terms)[:20])
 
 @app.route("/", methods = ['GET', 'POST'])
 def home():
     form = Search_Form()
     ans = []
+    q_terms = []
     if form.validate_on_submit():
         query = form.search.data
         q_terms = [term.lower() for term in query.strip().split()]
         ans = calc_docs_sorted_order(q_terms)[:20]
-    return render_template('index.html', form = form, results = ans)
+    
+    if len(q_terms) != 0:
+        search_triggered = True
+    else:
+        search_triggered = False
+
+    return render_template('index.html', form = form, results = ans, search_triggered = search_triggered)

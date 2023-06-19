@@ -1,13 +1,15 @@
 import os
 import re
 
-qData_folder = "Leetcode scraping/qData"
+qData_folder = "Leetcode-scraping/qData"
 
+# We are taking the body of the question, so we stop reading once we encounter examples
 target_str = "Example 1:"
 
 all_lines = []
 
 for i in range(1, 2040):
+    # adding body of the ith question
     file_path = os.path.join(qData_folder, "{}/{}.txt".format(i, i))
 
     doc = ""
@@ -21,6 +23,20 @@ for i in range(1, 2040):
             doc += line
     
     all_lines.append(doc)
+
+
+# adding heading of the ith question
+head_path = os.path.join(qData_folder, "index.txt")
+
+with open(head_path, "r", encoding='utf-8', errors = "ignore") as f:
+    headings = f.readlines()
+
+for (i, heading) in enumerate(headings, 0):
+    # removing the Q No from the heading
+    words = heading.split()
+    heading = ' '.join(words[1:])
+    # Now adding the remainging words in heading to the respective q's body
+    all_lines[i] += heading
 
 
 def preprocess(text):      # remove problem no, and return a list of lowercase words
